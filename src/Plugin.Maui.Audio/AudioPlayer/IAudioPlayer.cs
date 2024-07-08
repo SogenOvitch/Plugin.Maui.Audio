@@ -10,6 +10,10 @@ public interface IAudioPlayer : IAudio
 	///</Summary>
 	event EventHandler PlaybackEnded;
 
+	event EventHandler VolumeChanged;
+
+	event EventHandler TimeChanged;
+
 	///<Summary>
 	/// Begin playback or resume if paused.
 	///</Summary>

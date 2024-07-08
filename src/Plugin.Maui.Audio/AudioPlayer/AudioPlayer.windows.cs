@@ -1,6 +1,5 @@
 ﻿using Windows.Media.Core;
 using Windows.Media.Playback;
-using static Microsoft.Maui.ApplicationModel.Permissions;
 
 namespace Plugin.Maui.Audio;
 
@@ -48,37 +47,37 @@ partial class AudioPlayer : IAudioPlayer
 
 	public bool CanSeek => player.PlaybackSession.CanSeek;
 
-    public AudioPlayer(Stream audioStream, AudioPlayerOptions audioPlayerOptions)
-    {
-        player = CreatePlayer();
+	public AudioPlayer(Stream audioStream, AudioPlayerOptions audioPlayerOptions)
+	{
+		player = CreatePlayer();
 
 		if (player is null)
 		{
 			throw new FailedToLoadAudioException($"Failed to create {nameof(MediaPlayer)} instance. Reason unknown.");
 		}
 
-        player.Source = MediaSource.CreateFromStream(audioStream?.AsRandomAccessStream(), string.Empty);
-        player.MediaEnded += OnPlaybackEnded;
+		player.Source = MediaSource.CreateFromStream(audioStream?.AsRandomAccessStream(), string.Empty);
+		player.MediaEnded += OnPlaybackEnded;
 		SetSpeed(1.0);
 	}
 
-    public AudioPlayer(string fileName, AudioPlayerOptions audioPlayerOptions)
-    {
-        player = CreatePlayer();
+	public AudioPlayer(string fileName, AudioPlayerOptions audioPlayerOptions)
+	{
+		player = CreatePlayer();
 
 		if (player is null)
 		{
 			throw new FailedToLoadAudioException($"Failed to create {nameof(MediaPlayer)} instance. Reason unknown.");
 		}
 
-        player.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/" + fileName));
-        player.MediaEnded += OnPlaybackEnded;
+		player.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/" + fileName));
+		player.MediaEnded += OnPlaybackEnded;
 		SetSpeed(1.0);
 	}
 
-    void OnPlaybackEnded(MediaPlayer sender, object args)
-    {
-        PlaybackEnded?.Invoke(sender, EventArgs.Empty);
+	void OnPlaybackEnded(MediaPlayer sender, object args)
+	{
+		PlaybackEnded?.Invoke(sender, EventArgs.Empty);
 	}
 
 	public void Play()

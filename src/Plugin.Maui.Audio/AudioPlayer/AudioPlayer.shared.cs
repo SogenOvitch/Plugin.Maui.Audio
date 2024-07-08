@@ -6,6 +6,10 @@ public partial class AudioPlayer : IAudioPlayer
 
 	public event EventHandler? PlaybackEnded;
 
+	public event EventHandler? VolumeChanged;
+
+	public event EventHandler? TimeChanged;
+
 #pragma warning restore CS0067
 	~AudioPlayer()
 	{

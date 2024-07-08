@@ -70,13 +70,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="LibVLCSharp" Version="3.8.5" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="all" IsImplicitlyDefined="true" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+		<PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.20" />
 	</ItemGroup>
 
 	<!-- Package additions -->
 	<ItemGroup>
 		<None Include="..\..\nuget.png" PackagePath="icon.png" Pack="true" />
-		<None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+		<None Include="..\..\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 </Project>
