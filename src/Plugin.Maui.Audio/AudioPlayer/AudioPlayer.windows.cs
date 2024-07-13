@@ -146,7 +146,7 @@ partial class AudioPlayer : IAudioPlayer
 
 		if (disposing)
 		{
-			Stop();
+			Pause();
 
 			player.MediaEnded -= OnPlaybackEnded;
 			player.Dispose();
