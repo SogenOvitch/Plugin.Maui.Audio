@@ -6,29 +6,32 @@ namespace Plugin.Maui.Audio;
 partial class AudioPlayer : IAudioPlayer
 {
 	bool isDisposed = false;
-	readonly MediaPlayer player;
+	MediaPlayer? player;
 
-	public double CurrentPosition => player.PlaybackSession.Position.TotalSeconds;
+	public double CurrentPosition => player?.PlaybackSession.Position.TotalSeconds ?? 0;
 
-	public double Duration => player.PlaybackSession.NaturalDuration.TotalSeconds;
+	public double Duration => player?.PlaybackSession.NaturalDuration.TotalSeconds ?? 0;
 
 	public double Volume
 	{
-		get => player.Volume;
+		get => player?.Volume ?? 0;
 		set => SetVolume(value, Balance);
 	}
 
 	public double Balance
 	{
-		get => player.AudioBalance;
+		get => player?.AudioBalance ?? 0;
 		set => SetVolume(Volume, value);
 	}
 
-	public double Speed => player.PlaybackSession.PlaybackRate;
+	public double Speed => player?.PlaybackSession.PlaybackRate ?? 0;
 
 	public void SetSpeed(double speed)
 	{
-		player.PlaybackSession.PlaybackRate = Math.Clamp(speed, MinimumSpeed, MaximumSpeed);
+		if (player != null)
+		{
+			player.PlaybackSession.PlaybackRate = Math.Clamp(speed, MinimumSpeed, MaximumSpeed);
+		}
 	}
 
 	public double MinimumSpeed => 0;
@@ -37,15 +40,15 @@ partial class AudioPlayer : IAudioPlayer
 
 	public bool CanSetSpeed => true;
 
-	public bool IsPlaying => player.PlaybackSession.PlaybackState == MediaPlaybackState.Playing; //might need to expand
+	public bool IsPlaying => player?.PlaybackSession.PlaybackState == MediaPlaybackState.Playing; //might need to expand
 
 	public bool Loop
 	{
-		get => player.IsLoopingEnabled;
-		set => player.IsLoopingEnabled = value;
+		get => player?.IsLoopingEnabled ?? false;
+		set { if (player != null) { player.IsLoopingEnabled = value; } }
 	}
 
-	public bool CanSeek => player.PlaybackSession.CanSeek;
+	public bool CanSeek => player?.PlaybackSession.CanSeek ?? false;
 
 	public AudioPlayer(Stream audioStream, AudioPlayerOptions audioPlayerOptions)
 	{
@@ -82,7 +85,7 @@ partial class AudioPlayer : IAudioPlayer
 
 	public void Play()
 	{
-		if (player.Source is null)
+		if (player?.Source is null)
 		{
 			return;
 		}
@@ -98,7 +101,7 @@ partial class AudioPlayer : IAudioPlayer
 
 	public void Pause()
 	{
-		player.Pause();
+		player?.Pause();
 	}
 
 	public void Stop()
@@ -110,7 +113,7 @@ partial class AudioPlayer : IAudioPlayer
 
 	public void Seek(double position)
 	{
-		if (player.PlaybackSession is null)
+		if (player?.PlaybackSession is null)
 		{
 			return;
 		}
@@ -123,7 +126,7 @@ partial class AudioPlayer : IAudioPlayer
 
 	void SetVolume(double volume, double balance)
 	{
-		if (isDisposed)
+		if (isDisposed || player == null)
 		{
 			return;
 		}
@@ -144,12 +147,13 @@ partial class AudioPlayer : IAudioPlayer
 			return;
 		}
 
-		if (disposing)
+		if (disposing && player != null)
 		{
 			Pause();
 
 			player.MediaEnded -= OnPlaybackEnded;
 			player.Dispose();
+			player = null;
 		}
 
 		isDisposed = true;
