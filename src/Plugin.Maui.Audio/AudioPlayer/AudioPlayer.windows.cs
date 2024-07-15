@@ -8,9 +8,9 @@ partial class AudioPlayer : IAudioPlayer
 	bool isDisposed = false;
 	MediaPlayer? player;
 
-	public double CurrentPosition => player?.PlaybackSession.Position.TotalSeconds ?? 0;
+	public double CurrentPosition => player?.PlaybackSession?.Position.TotalSeconds ?? 0;
 
-	public double Duration => player?.PlaybackSession.NaturalDuration.TotalSeconds ?? 0;
+	public double Duration => player?.PlaybackSession?.NaturalDuration.TotalSeconds ?? 0;
 
 	public double Volume
 	{
@@ -24,11 +24,11 @@ partial class AudioPlayer : IAudioPlayer
 		set => SetVolume(Volume, value);
 	}
 
-	public double Speed => player?.PlaybackSession.PlaybackRate ?? 0;
+	public double Speed => player?.PlaybackSession?.PlaybackRate ?? 0;
 
 	public void SetSpeed(double speed)
 	{
-		if (player != null)
+		if (player?.PlaybackSession != null)
 		{
 			player.PlaybackSession.PlaybackRate = Math.Clamp(speed, MinimumSpeed, MaximumSpeed);
 		}
@@ -48,7 +48,7 @@ partial class AudioPlayer : IAudioPlayer
 		set { if (player != null) { player.IsLoopingEnabled = value; } }
 	}
 
-	public bool CanSeek => player?.PlaybackSession.CanSeek ?? false;
+	public bool CanSeek => player?.PlaybackSession?.CanSeek ?? false;
 
 	public AudioPlayer(Stream audioStream, AudioPlayerOptions audioPlayerOptions)
 	{
@@ -85,7 +85,7 @@ partial class AudioPlayer : IAudioPlayer
 
 	public void Play()
 	{
-		if (player?.Source is null)
+		if (player?.Source is null || player?.PlaybackSession is null)
 		{
 			return;
 		}
