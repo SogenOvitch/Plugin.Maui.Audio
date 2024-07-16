@@ -8,9 +8,9 @@ partial class AudioPlayer : IAudioPlayer
 	bool isDisposed = false;
 	MediaPlayer? player;
 
-	public double CurrentPosition => player?.PlaybackSession?.Position.TotalSeconds ?? 0;
+	public double CurrentPosition => GetPlaybackSession()?.Position.TotalSeconds ?? 0;
 
-	public double Duration => player?.PlaybackSession?.NaturalDuration.TotalSeconds ?? 0;
+	public double Duration => GetPlaybackSession()?.NaturalDuration.TotalSeconds ?? 0;
 
 	public double Volume
 	{
@@ -24,13 +24,27 @@ partial class AudioPlayer : IAudioPlayer
 		set => SetVolume(Volume, value);
 	}
 
-	public double Speed => player?.PlaybackSession?.PlaybackRate ?? 0;
+	public double Speed => GetPlaybackSession()?.PlaybackRate ?? 0;
 
 	public void SetSpeed(double speed)
 	{
-		if (player?.PlaybackSession != null)
+		var playbackSession = GetPlaybackSession();
+
+		if (playbackSession != null)
 		{
-			player.PlaybackSession.PlaybackRate = Math.Clamp(speed, MinimumSpeed, MaximumSpeed);
+			playbackSession.PlaybackRate = Math.Clamp(speed, MinimumSpeed, MaximumSpeed);
+		}
+	}
+
+	MediaPlaybackSession? GetPlaybackSession()
+	{
+		try
+		{
+			return player?.PlaybackSession;
+		}
+		catch
+		{
+			return null;
 		}
 	}
 
@@ -40,7 +54,7 @@ partial class AudioPlayer : IAudioPlayer
 
 	public bool CanSetSpeed => true;
 
-	public bool IsPlaying => player?.PlaybackSession.PlaybackState == MediaPlaybackState.Playing; //might need to expand
+	public bool IsPlaying => GetPlaybackSession()?.PlaybackState == MediaPlaybackState.Playing; //might need to expand
 
 	public bool Loop
 	{
@@ -48,7 +62,7 @@ partial class AudioPlayer : IAudioPlayer
 		set { if (player != null) { player.IsLoopingEnabled = value; } }
 	}
 
-	public bool CanSeek => player?.PlaybackSession?.CanSeek ?? false;
+	public bool CanSeek => GetPlaybackSession()?.CanSeek ?? false;
 
 	public AudioPlayer(Stream audioStream, AudioPlayerOptions audioPlayerOptions)
 	{
@@ -85,12 +99,14 @@ partial class AudioPlayer : IAudioPlayer
 
 	public void Play()
 	{
-		if (player?.Source is null || player?.PlaybackSession is null)
+		var playbackSession = GetPlaybackSession();
+
+		if (player?.Source is null || playbackSession is null)
 		{
 			return;
 		}
 
-		if (player.PlaybackSession.PlaybackState == MediaPlaybackState.Playing)
+		if (playbackSession.PlaybackState == MediaPlaybackState.Playing)
 		{
 			Pause();
 			Seek(0);
@@ -113,14 +129,16 @@ partial class AudioPlayer : IAudioPlayer
 
 	public void Seek(double position)
 	{
-		if (player?.PlaybackSession is null)
+		var playbackSession = GetPlaybackSession();
+
+		if (playbackSession is null)
 		{
 			return;
 		}
 
-		if (player.PlaybackSession.CanSeek)
+		if (playbackSession.CanSeek)
 		{
-			player.PlaybackSession.Position = TimeSpan.FromSeconds(position);
+			playbackSession.Position = TimeSpan.FromSeconds(position);
 		}
 	}
 
