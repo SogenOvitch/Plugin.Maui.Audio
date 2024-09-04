@@ -304,6 +304,11 @@ partial class AudioPlayer : IAudioPlayer
 	{
 		PlaybackEnded?.Invoke(this, e);
 
+		if (isDisposed)
+		{
+			return;
+		}
+
 		isPlaying = player.IsPlaying;
 
 		//this improves stability on older devices but has minor performance impact
