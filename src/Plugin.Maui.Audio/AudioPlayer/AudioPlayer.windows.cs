@@ -72,6 +72,7 @@ partial class AudioPlayer : IAudioPlayer
 		{
 			throw new FailedToLoadAudioException($"Failed to create {nameof(MediaPlayer)} instance. Reason unknown.");
 		}
+		player.CommandManager.IsEnabled = false;
 
 		player.Source = MediaSource.CreateFromStream(audioStream?.AsRandomAccessStream(), string.Empty);
 		player.MediaEnded += OnPlaybackEnded;
@@ -86,6 +87,7 @@ partial class AudioPlayer : IAudioPlayer
 		{
 			throw new FailedToLoadAudioException($"Failed to create {nameof(MediaPlayer)} instance. Reason unknown.");
 		}
+		player.CommandManager.IsEnabled = false;
 
 		player.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/" + fileName));
 		player.MediaEnded += OnPlaybackEnded;
